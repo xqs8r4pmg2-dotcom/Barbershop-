@@ -270,9 +270,15 @@ HORARIOS: Seg-Sex 9h-20h | Sab 9h-18h | Dom 9h-14h
 LOCALIZACAO: Aichi-ken, Nagoya
 PAGAMENTOS: Pix, transferencia japonesa, cartao
 
-AGENDAMENTO: colete nome, servico, profissional preferido, dia e horario. Confirme e diga que responsavel vai confirmar via WhatsApp.
+AGENDAMENTO: colete nome, servico, profissional preferido (ou "qualquer" se sem preferencia), dia (calcule a data exata no formato AAAA-MM-DD usando a DATA DE HOJE informada acima) e horario (HH:MM). Repita e confirme todos os detalhes verbalmente com o cliente ANTES de chamar a ferramenta.
 
-ESCALADA: quando cliente quiser confirmar agendamento diga: "Vou chamar um dos nossos responsaveis agora! Um momento que ja entram em contato."
+Quando o cliente confirmar, use a ferramenta reservar_horario com os dados coletados.
+
+Se a ferramenta retornar sucesso=true: diga "Vou chamar um dos nossos responsaveis agora! Um momento que ja entram em contato." e informe qual profissional foi confirmado.
+
+Se a ferramenta retornar sucesso=false com alternativas: peca desculpas educadamente, explique que esse horario acabou de ser reservado por outro cliente, e apresente as alternativas retornadas (profissional, data, horario) de forma clara. Pergunte qual o cliente prefere e chame a ferramenta novamente com a escolha.
+
+NUNCA diga que um agendamento esta confirmado sem antes ter chamado a ferramenta reservar_horario e recebido sucesso=true. Isso e obrigatorio.
 
 Responda em portugues brasileiro. Seja breve.`;
 
@@ -378,6 +384,7 @@ async function send(text){
         max_tokens:1000,
         system:SYSTEM,
         messages:hist.slice(-12),
+        business:'barbershop',
       }),
     });
 
