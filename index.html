@@ -4,8 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>BarberStyle • Atendimento Online</title>
-<link rel="apple-touch-icon" sizes="180x180" href="icone-ferramentas.png">
-<link rel="icon" type="image/png" href="icone-ferramentas.png">
 <meta name="description" content="Fale com nosso assistente virtual, tire duvidas e agende seu horario no BarberStyle."/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -209,10 +207,7 @@ const WA_NUM = "819000000000"; // substitua pelo numero real
     </div>
   </div>
 
-  <div class="tp" id="tp">
-    <div class="ma">✂</div>
-    <div class="tb"><div class="d"></div><div class="d"></div><div class="d"></div></div>
-  </div>
+
 
   <div class="esc" id="esc">
     <div class="ed"></div>
@@ -361,6 +356,20 @@ function addMsg(role, text){
   show(id);
 }
 
+function showTyping(){
+  const c=document.getElementById('msgs');
+  const anc=document.getElementById('anc');
+  const el=document.createElement('div');
+  el.className='tp on';
+  el.id='tp-dynamic';
+  el.innerHTML='<div class="ma">✂</div><div class="tb"><div class="d"></div><div class="d"></div><div class="d"></div></div>';
+  c.insertBefore(el,anc);
+  scroll();
+}
+function hideTyping(){
+  const el=document.getElementById('tp-dynamic');
+  if(el) el.remove();
+}
 async function send(text){
   const inp = document.getElementById('inp');
   const msg = text || inp.value.trim();
@@ -374,7 +383,7 @@ async function send(text){
   hist.push({role:'user',content:msg});
 
   // Show typing
-  document.getElementById('tp').classList.add('on');
+  showTyping();
   scroll();
 
   try {
@@ -390,7 +399,7 @@ async function send(text){
       }),
     });
 
-    document.getElementById('tp').classList.remove('on');
+    hideTyping();
 
     const raw = await res.text();
     let reply = '';
@@ -421,7 +430,7 @@ async function send(text){
     }
 
   } catch(e){
-    document.getElementById('tp').classList.remove('on');
+    hideTyping();
     addMsg('b', 'Ops! Problema tecnico. Tenta de novo em instantes!');
   }
 }
