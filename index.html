@@ -82,7 +82,7 @@ body{
 
 <script>
 const WORKER = "https://agente-proxy.wnwkv4g7hw.workers.dev";
-const WA_NUM = "819000000000";
+const WA_NUM = "818000000000";
 </script>
 
 <div class="hd">
@@ -160,7 +160,15 @@ const I18N = {
     esc_title: "Atendente notificado",
     esc_sub: "Um responsavel entrara em contato via WhatsApp",
     lang_instr: "Responda SEMPRE em portugues brasileiro, independente do idioma usado pelo cliente.",
-    locale: "pt-BR"
+    locale: "pt-BR",
+    svcQ: "Quanto custa {n}?",
+    svcs: [
+      {i:"✂️",n:"Corte",p:"¥5.800"},
+      {i:"🪒",n:"Barba",p:"¥4.500"},
+      {i:"💈",n:"Combo",p:"¥9.000"},
+      {i:"✨",n:"Hidrat.",p:"¥6.500"},
+      {i:"👁️",n:"Sobrancelha",p:"¥2.500"}
+    ]
   },
   ja: {
     greeting: "こんにちは！👋 BarberStyleへようこそ！<br>アシスタントのNavaです。<br><br>サービス、料金、ご予約についてお手伝いします。どのようにお手伝いしましょうか？✂️",
@@ -175,7 +183,15 @@ const I18N = {
     esc_title: "スタッフに通知しました",
     esc_sub: "担当者がWhatsAppでご連絡いたします",
     lang_instr: "お客様が使用する言語に関わらず、必ず日本語で丁寧に返信してください。",
-    locale: "ja-JP"
+    locale: "ja-JP",
+    svcQ: "{n}の料金はいくらですか？",
+    svcs: [
+      {i:"✂️",n:"カット",p:"¥5.800"},
+      {i:"🪒",n:"ひげ剃り",p:"¥4.500"},
+      {i:"💈",n:"コンボ",p:"¥9.000"},
+      {i:"✨",n:"トリートメント",p:"¥6.500"},
+      {i:"👁️",n:"眉毛",p:"¥2.500"}
+    ]
   },
   en: {
     greeting: "Hi! 👋 Welcome to BarberStyle!<br>I'm Nava, your virtual assistant.<br><br>I can help with services, prices and bookings. How can I help you? ✂️",
@@ -190,7 +206,15 @@ const I18N = {
     esc_title: "Staff notified",
     esc_sub: "Someone will contact you via WhatsApp shortly",
     lang_instr: "ALWAYS reply in English, regardless of the language the customer uses.",
-    locale: "en-US"
+    locale: "en-US",
+    svcQ: "How much is {n}?",
+    svcs: [
+      {i:"✂️",n:"Haircut",p:"¥5,800"},
+      {i:"🪒",n:"Beard",p:"¥4,500"},
+      {i:"💈",n:"Combo",p:"¥9,000"},
+      {i:"✨",n:"Treatment",p:"¥6,500"},
+      {i:"👁️",n:"Eyebrows",p:"¥2,500"}
+    ]
   }
 };
 let LANG = 'pt';
@@ -202,6 +226,19 @@ function detectLang(){
   return 'pt';
 }
 
+function renderSvcs(){
+  const t = I18N[LANG];
+  const s = document.getElementById('svcs');
+  s.innerHTML = '';
+  t.svcs.forEach(sv=>{
+    const d = document.createElement('div');
+    d.className='sc';
+    d.innerHTML=`<div class="sn">${sv.i} ${sv.n}</div><div class="sp">${sv.p}</div>`;
+    d.onclick=()=>send(t.svcQ.replace('{n}', sv.n));
+    s.appendChild(d);
+  });
+}
+
 function applyLangUI(){
   const t = I18N[LANG];
   document.querySelectorAll('.lgb').forEach(b=>b.classList.toggle('active', b.dataset.lang===LANG));
@@ -209,6 +246,7 @@ function applyLangUI(){
   document.getElementById('waText').textContent = t.wa;
   document.querySelector('#esc .et strong').textContent = t.esc_title;
   document.querySelector('#esc .et span').textContent = t.esc_sub;
+  renderSvcs();
   if(hist.length===0){
     document.querySelector('#m0 .bb.b').innerHTML = t.greeting;
     document.getElementById('qr').innerHTML = t.quick.map(q=>`<button class="qb" onclick="send('${q.msg.replace(/'/g,"\\'")}')">${q.label}</button>`).join('');
@@ -260,14 +298,6 @@ function buildSystem(){
   return getDateContext() + BASE_SYSTEM + '\n\n' + I18N[LANG].lang_instr + ' Seja breve.';
 }
 
-const SVCS = [
-  {i:"✂️",n:"Corte",p:"¥5.800"},
-  {i:"🪒",n:"Barba",p:"¥4.500"},
-  {i:"💈",n:"Combo",p:"¥9.000"},
-  {i:"✨",n:"Hidrat.",p:"¥6.500"},
-  {i:"👁️",n:"Sobrancelha",p:"¥2.500"}
-];
-
 let hist = [];
 let esc = false;
 let msgCount = 0;
@@ -278,15 +308,6 @@ function init(){
 
   document.getElementById('t0').textContent = now();
   setTimeout(()=>show('m0'), 300);
-
-  const s = document.getElementById('svcs');
-  SVCS.forEach(sv=>{
-    const d = document.createElement('div');
-    d.className='sc';
-    d.innerHTML=`<div class="sn">${sv.i} ${sv.n}</div><div class="sp">${sv.p}</div>`;
-    d.onclick=()=>send(`Quanto custa ${sv.n}?`);
-    s.appendChild(d);
-  });
 
   document.getElementById('wa').href = `https://wa.me/${WA_NUM}`;
 }
