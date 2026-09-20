@@ -301,11 +301,13 @@ let hist = [];
 let esc = false;
 let msgCount = 0;
 
+let waNumber = null;
+
 async function loadWaNumber(){
   try{
     const r = await fetch(`${WORKER}?config=barbershop`);
     const d = await r.json();
-    if(d.wa) document.getElementById('wa').href = `https://wa.me/${d.wa}`;
+    if(d.wa){ waNumber = d.wa; document.getElementById('wa').href = `https://wa.me/${d.wa}`; }
     else document.getElementById('wa').style.display = 'none';
   }catch(e){
     document.getElementById('wa').style.display = 'none';
@@ -435,6 +437,9 @@ async function send(text){
 
     if(handoff && !esc){
       esc = true;
+      if(waNumber){
+        document.getElementById('wa').href = `https://wa.me/${waNumber}?text=${encodeURIComponent(reply)}`;
+      }
       setTimeout(()=>document.getElementById('esc').classList.add('on'), 400);
       scroll();
     }
