@@ -82,7 +82,6 @@ body{
 
 <script>
 const WORKER = "https://agente-proxy.wnwkv4g7hw.workers.dev";
-const WA_NUM = "818000000000";
 </script>
 
 <div class="hd">
@@ -302,6 +301,17 @@ let hist = [];
 let esc = false;
 let msgCount = 0;
 
+async function loadWaNumber(){
+  try{
+    const r = await fetch(`${WORKER}?config=barbershop`);
+    const d = await r.json();
+    if(d.wa) document.getElementById('wa').href = `https://wa.me/${d.wa}`;
+    else document.getElementById('wa').style.display = 'none';
+  }catch(e){
+    document.getElementById('wa').style.display = 'none';
+  }
+}
+
 function init(){
   LANG = detectLang();
   applyLangUI();
@@ -309,7 +319,7 @@ function init(){
   document.getElementById('t0').textContent = now();
   setTimeout(()=>show('m0'), 300);
 
-  document.getElementById('wa').href = `https://wa.me/${WA_NUM}`;
+  loadWaNumber();
 }
 
 function now(){
